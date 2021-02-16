@@ -1,8 +1,10 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+const morgan = require('morgan');
 
 app.set('view engine', 'ejs');
+app.use(morgan('dev'));
 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
@@ -47,9 +49,7 @@ app.post("/urls", (req, res) => {
   // console.log( { shortURL: generateRandomString() });  //revise this to put in an object 
   urlDatabase[shortURL] = req.body.longURL
   console.log(urlDatabase);
-
-  const shortURLKey = Object.keys(urlDatabase)[2];
-  res.redirect(`/urls/:${shortURLKey}`);         // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortURL}`);         
 });
 
 
@@ -78,8 +78,9 @@ app.get("/urls/:shortURL", (req, res) => {
 //GET /u/:shortURL
 
 app.get("/u/:shortURL", (req, res) => {
- const longURL = Object.values(urlDatabase)[2];
- console.log(longURL);
- res.redirect(longURL);
+//console.log(req.params.shortURL);
+const longURL = urlDatabase[req.params.shortURL];
+res.redirect(longURL);
 });
+
 
