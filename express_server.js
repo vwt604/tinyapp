@@ -43,7 +43,7 @@ app.listen(PORT, () => {
 
 //GET /urls
 
-app.get("/urls", (req, res) => {    //
+app.get("/urls", (req, res) => {    //will render the page with the urls_new EJS template
   const templateVars = { urls: urlDatabase };   //shortcut to look inside the views directory for any template files
   res.render("urls_index", templateVars);
 });
@@ -60,7 +60,7 @@ app.post("/urls", (req, res) => {
 
 
 
-//GET: /urls/new. This route handler will render the page with the form (urls_new). Placed before ID. 
+//GET: /urls/new. will render the page with the urls_new EJS template
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
@@ -70,9 +70,10 @@ app.get("/urls/new", (req, res) => {
 // GET /urls/:shortURL
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars)
 });
+
 
 
 //GET /u/:shortURL
@@ -91,3 +92,5 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   console.log(urlDatabase);
   res.redirect(`/urls`);         
 });
+
+//POST:  modify the corresponding longURL, and then redirect the client back to "/urls".
