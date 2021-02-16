@@ -3,10 +3,12 @@ const app = express();
 const PORT = 8080; // default port 8080
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(morgan('dev'));
+app.use(cookieParser());
 
 function generateRandomString() {
   return Math.random().toString(16).substring(2, 8);
@@ -99,6 +101,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls/:shortURL/", (req, res) => {
   // console.log(req.body);
-  urlDatabase[req.params.shortURL] = req.body.newURL
+  urlDatabase[req.params.shortURL] = req.body.newURL;
   res.redirect(`/urls`);        
 });
