@@ -45,8 +45,9 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   // console.log(req.body);  // Log the POST request body to the console. Note this has been parsed already
   // console.log( { shortURL: generateRandomString() });  //revise this to put in an object 
-  urlDatabase[shortURL] = "req.body.longURL"
-  
+  urlDatabase[shortURL] = req.body.longURL
+  console.log(urlDatabase);
+
   const shortURLKey = Object.keys(urlDatabase)[2];
   res.redirect(`/urls/:${shortURLKey}`);         // Respond with 'Ok' (we will replace this)
 });
@@ -74,4 +75,11 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 
+//GET /u/:shortURL
+
+app.get("/u/:shortURL", (req, res) => {
+ const longURL = Object.values(urlDatabase)[2];
+ console.log(longURL);
+ res.redirect(longURL);
+});
 
