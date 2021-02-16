@@ -43,10 +43,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  console.log(req.body);  // Log the POST request body to the console. Note this has been parsed already
-  console.log( { shortURL: generateRandomString() });  //revise this to put in an object 
-  urlDatabase[shortURL] = req.body.longURL
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  // console.log(req.body);  // Log the POST request body to the console. Note this has been parsed already
+  // console.log( { shortURL: generateRandomString() });  //revise this to put in an object 
+  urlDatabase[shortURL] = "req.body.longURL"
+  
+  const shortURLKey = Object.keys(urlDatabase)[2];
+  res.redirect(`/urls/:${shortURLKey}`);         // Respond with 'Ok' (we will replace this)
 });
 
 
