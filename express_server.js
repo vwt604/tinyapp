@@ -8,7 +8,6 @@ function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
 
-
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -43,10 +42,12 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString();
   console.log(req.body);  // Log the POST request body to the console. Note this has been parsed already
+  console.log( { shortURL: generateRandomString() });  //revise this to put in an object 
+  urlDatabase[shortURL] = req.body.longURL
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
-
 
 
 //GET: /urls/new. This route handler will render the page with the form (urls_new). Placed before ID. 
@@ -69,5 +70,6 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL };
   res.render("urls_show", templateVars)
 });
+
 
 
