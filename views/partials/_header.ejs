@@ -8,12 +8,22 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        <form class = "form-inline" action="/login" method="POST">
-          Logged in as: <%= username %>
-          <input type="text" class="form-control" name="username" placeholder="Username">
-          <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+        <% if (username) { %> 
+          <form method="POST" action="/logout">
+            <div class="form-group mb-2">
+              Logged In As: <%= username %>
+              <button type="submit" style="background-color:transparent; border-color:darkslategray; color:darkslategray" class="btn btn-primary">Logout</button>
+            </div>
+          </form>
+        <% } else{ %>  
+          <form class = "form-inline" action="/login" method="POST">
+            <input type="text" class="form-control" name="username" placeholder="Username">
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+       <% } %>
       </div>
     </div>
   </nav>
 </header>
+
+<!-- Once logged in, form should instead display the username and contain just a Log Out button  -->
