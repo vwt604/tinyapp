@@ -27,14 +27,21 @@ function generateRandomString() {
   return Math.random().toString(16).substring(2, 8);
 }
 
+
+function checkExistingEmail(email) {
+  for (var userID in users) {
+    if(users[userID].email === email) return true
+  }
+  return false
+};
+
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-const users = {
-
-}
+const users = {};
 
 // GET / 
 
@@ -168,17 +175,45 @@ app.get("/register", (req, res) => {
 //POST /register    :: adds new user object to global users object
 
 app.post("/register", (req, res) => {
+
   res.cookie("email", req.body.email);
   res.cookie("password", req.body.password);
-  const id = generateRandomString();
+
+  const userID = generateRandomString();
   const newUser = {
-    id: id,
-    email: req.cookies.email,
-    password: req.cookies.password
+    "id": userID,
+    "email": req.body.email,
+    "password": req.body.password
   }
-  users[id] = newUser;
-  res.redirect(`/urls`);    
+
+  if(!newUser.email || !newUser.password) {
+    res.status(400).render('400');
+  } else if (checkExistingEmail(req.body.email)) {
+    res.status(400).render('400');
+  } else {
+    users[userID] = newUser;
+    res.cookie('userID', userID)
+    res.redirect(`/urls`); 
+  }
+
+     
 });
+
+// app.post("/register", (req, res) => {
+
+//   res.cookie("email", req.body.email);
+//   res.cookie("password", req.body.password);
+
+//   const userID = generateRandomString();
+//   const newUser = {
+//     "id": userID,
+//     "email": req.cookies.email,
+//     "password": req.cookies.password
+//   }
+
+//   users[userID] = newUser;
+//   res.redirect(`/urls`);    
+// });
 
 
 //------------  /login  ------------//
