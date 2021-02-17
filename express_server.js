@@ -120,12 +120,12 @@ app.post("/login", (req, res) => {
 });
 
 
-//POST /urls/login   set a cookie named username to the value submitted in the request body via the login form then redirects to "/urls"
+//POST /urls/logout   
 
 app.post("/logout", (req, res) => {
   const username = req.body.username;
   res.clearCookie('username', username);
-  // console.log(req.body);     
+  
   res.redirect(`/urls`);    
 });
 
