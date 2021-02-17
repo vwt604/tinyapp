@@ -31,6 +31,9 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  
+}
 
 // GET / 
 
@@ -138,7 +141,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect(`/urls`);         
 });
 
-// ***** in page links ***** //
+
 
 //GET /u/:shortURL  :: Clickable link on the page displayed as shortURL. Redirects to longURL when clicked
 
@@ -146,9 +149,30 @@ app.get("/u/:shortURL", (req, res) => {
   //console.log(req.params.shortURL);
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
-  });
+});
 
 
 
+//------------  /register  ------------//
 
 
+
+app.get("/register", (req, res) => {
+  const templateVars = {username: req.cookies["username"]}; 
+  res.render("register", templateVars)
+});
+
+
+//lecture
+
+app.post("/login,", (req, res) => {
+  let testName = req.body.username;
+  let testPassword = req.body.password;
+
+  if(users[testName] && users[testName] === testPassword) {
+    console.log("Success!");
+    res.cookie("user", testName);
+    res.redirect("/");
+
+  }
+})
