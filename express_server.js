@@ -32,7 +32,7 @@ const urlDatabase = {
 };
 
 const users = {
-  
+
 }
 
 // GET / 
@@ -163,16 +163,3 @@ app.get("/register", (req, res) => {
 });
 
 
-//lecture
-
-app.post("/login,", (req, res) => {
-  let testName = req.body.username;
-  let testPassword = req.body.password;
-
-  if(users[testName] && users[testName] === testPassword) {
-    console.log("Success!");
-    res.cookie("user", testName);
-    res.redirect("/");
-
-  }
-})
