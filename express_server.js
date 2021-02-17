@@ -104,3 +104,12 @@ app.post("/urls/:shortURL/", (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.newURL;
   res.redirect(`/urls`);        
 });
+
+//POST /urls/login   set a cookie named username to the value submitted in the request body via the login form then redirects to "/urls"
+
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  res.cookie('username', username);
+  console.log(req.body);
+  res.redirect(`/urls`);         
+});
