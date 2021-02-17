@@ -69,14 +69,15 @@ app.post("/urls", (req, res) => {
 //GET: /urls/new. will render the page with the urls_new EJS template
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {username: req.cookies["username"]}; 
+  res.render("urls_new", templateVars);
 });
 
 
 // GET /urls/:shortURL
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
   res.render("urls_show", templateVars)
 });
 
@@ -119,9 +120,13 @@ app.post("/login", (req, res) => {
 });
 
 
+//POST /urls/login   set a cookie named username to the value submitted in the request body via the login form then redirects to "/urls"
 
-// const templateVars = {
-//   username: req.cookies["username"],
-//   // ... any other vars
-// };
-// res.render("urls_index", templateVars);
+app.post("/logout", (req, res) => {
+  const username = req.body.username;
+  res.clearCookie('username', username);
+  // console.log(req.body);     
+  res.redirect(`/urls`);    
+});
+
+
