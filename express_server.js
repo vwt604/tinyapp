@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(morgan('dev'));
@@ -156,12 +157,28 @@ app.get("/u/:shortURL", (req, res) => {
 //------------  /register  ------------//
 
 
-
+//GET /register     :: renders register.ejs template
 app.get("/register", (req, res) => {
   const templateVars = {username: req.cookies["username"]}; 
   res.render("register", templateVars)
 });
 
+
+
+//POST /register    :: adds new user object to global users object
+
+app.post("/register", (req, res) => {
+  res.cookie("email", req.body.email);
+  res.cookie("password", req.body.password);
+  const id = generateRandomString();
+  const newUser = {
+    id: id,
+    email: req.cookies.email,
+    password: req.cookies.password
+  }
+  users[id] = newUser;
+  res.redirect(`/urls`);    
+});
 
 
 //------------  /login  ------------//
@@ -170,4 +187,9 @@ app.get("/register", (req, res) => {
 app.get("/login", (req, res) => {
   const templateVars = {username: req.cookies["username"]}; 
   res.render("login", templateVars)
+});
+
+
+app.post("/register", (req, res) => {
+  req.body.name
 });
