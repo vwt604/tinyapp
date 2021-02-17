@@ -20,6 +20,7 @@ const urlDatabase = {
 };
 
 
+
 // GET / 
 
 app.get("/", (req, res) => {
@@ -43,12 +44,15 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+
 //GET /urls
 
 app.get("/urls", (req, res) => {    //will render the page with the urls_new EJS template
-  const templateVars = { urls: urlDatabase };   //shortcut to look inside the views directory for any template files
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"]};   //shortcut to look inside the views directory for any template files
   res.render("urls_index", templateVars);
 });
+
+
 
 //POST: /urls
 app.post("/urls", (req, res) => {
@@ -110,6 +114,14 @@ app.post("/urls/:shortURL/", (req, res) => {
 app.post("/login", (req, res) => {
   const username = req.body.username;
   res.cookie('username', username);
-  console.log(req.body);
-  res.redirect(`/urls`);         
+  // console.log(req.body);     
+  res.redirect(`/urls`);    
 });
+
+
+
+// const templateVars = {
+//   username: req.cookies["username"],
+//   // ... any other vars
+// };
+// res.render("urls_index", templateVars);
