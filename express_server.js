@@ -1,3 +1,7 @@
+//*NOTE 1) Reroute Edit button on /urls page 2) Fix /u/
+
+//------------  SET UP  ------------//
+
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
@@ -10,6 +14,14 @@ app.set('view engine', 'ejs');
 app.use(morgan('dev'));
 app.use(cookieParser());
 
+app.listen(PORT, () => {
+  console.log(`TinyApp is listening on port ${PORT}!`);
+});
+
+
+// ******** ---------  CODE --------- ******** // 
+
+
 function generateRandomString() {
   return Math.random().toString(16).substring(2, 8);
 }
@@ -18,7 +30,6 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
 
 
 // GET / 
@@ -40,21 +51,21 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
 
 
-//GET /urls
 
-app.get("/urls", (req, res) => {    //will render the page with the urls_new EJS template
+//------------  /urls  ------------//
+
+
+//GET /urls   :: Renders urls_index.ejs page
+
+app.get("/urls", (req, res) => {   
   const templateVars = { urls: urlDatabase, username: req.cookies["username"]};   //shortcut to look inside the views directory for any template files
   res.render("urls_index", templateVars);
 });
 
 
-
-//POST: /urls
+//POST /urls    :: Generates a random string, saves the string to the urlDatabase with longURL as value, then rediects to "/urls/:shortURL/"     
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   // console.log(req.body);  // Log the POST request body to the console. Note this has been parsed already
@@ -65,52 +76,7 @@ app.post("/urls", (req, res) => {
 });
 
 
-
-//GET: /urls/new. will render the page with the urls_new EJS template
-
-app.get("/urls/new", (req, res) => {
-  const templateVars = {username: req.cookies["username"]}; 
-  res.render("urls_new", templateVars);
-});
-
-
-// GET /urls/:shortURL
-
-app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
-  res.render("urls_show", templateVars)
-});
-
-
-
-//GET /u/:shortURL
-
-app.get("/u/:shortURL", (req, res) => {
-//console.log(req.params.shortURL);
-const longURL = urlDatabase[req.params.shortURL];
-res.redirect(longURL);
-});
-
-
-//POST /urls/:shortURL/delete
-
-
-app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  console.log(urlDatabase);
-  res.redirect(`/urls`);         
-});
-
-
-//POST /urls/:shortURL/  modify the corresponding longURL, and then redirect the client back to "/urls".
-
-app.post("/urls/:shortURL/", (req, res) => {
-  // console.log(req.body);
-  urlDatabase[req.params.shortURL] = req.body.newURL;
-  res.redirect(`/urls`);        
-});
-
-//POST /urls/login   set a cookie named username to the value submitted in the request body via the login form then redirects to "/urls"
+//POST /urls/login  :: Sets a cookie named username then redirects to "/urls"
 
 app.post("/login", (req, res) => {
   const username = req.body.username;
@@ -120,7 +86,7 @@ app.post("/login", (req, res) => {
 });
 
 
-//POST /urls/login   set a cookie named username to the value submitted in the request body via the login form then redirects to "/urls"
+//POST /urls/logout  :: Deletes username cookie then redirects to "/urls"
 
 app.post("/logout", (req, res) => {
   const username = req.body.username;
@@ -128,5 +94,61 @@ app.post("/logout", (req, res) => {
   // console.log(req.body);     
   res.redirect(`/urls`);    
 });
+
+
+
+//------------  /urls/new  ------------//
+
+
+//GET: /urls/new    :: Renders page with urls_new.ejs
+
+app.get("/urls/new", (req, res) => {
+  const templateVars = {username: req.cookies["username"]}; 
+  res.render("urls_new", templateVars);
+});
+
+
+//------------  /urls/:shortURL  ------------//
+
+
+// GET /urls/:shortURL    :: Renders with urls_show.ejs
+
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  res.render("urls_show", templateVars)
+});
+
+
+//POST /urls/:shortURL/   :: Edits the longURL, then redirects to "/urls"
+
+app.post("/urls/:shortURL/", (req, res) => {
+  // console.log(req.body);
+  urlDatabase[req.params.shortURL] = req.body.newURL;
+  res.redirect(`/urls`);        
+});
+
+
+
+//POST /urls/:shortURL/delete   :: Deletes shortURL from database, then redirects to "/urls"
+
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  // console.log(urlDatabase);
+  res.redirect(`/urls`);         
+});
+
+// ***** in page links ***** //
+
+//GET /u/:shortURL  :: Clickable link on the page displayed as shortURL. Redirects to longURL when clicked
+
+app.get("/u/:shortURL", (req, res) => {
+  //console.log(req.params.shortURL);
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+  });
+
+
+
 
 
