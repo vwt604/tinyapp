@@ -161,7 +161,7 @@ app.post("/logout", (req, res) => {
 //------------  /urls/new  ------------//
 
 
-//GET: /urls/new    :: Renders page with urls_new.ejs.
+//GET: /urls/new    :: Renders page with urls_new.ejs. Only logged-in users have access
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {user: users[req.cookies["user_id"]]};
@@ -177,11 +177,16 @@ app.get("/urls/new", (req, res) => {
 //------------  /urls/:shortURL  ------------//
 
 
-// GET /urls/:shortURL    :: Renders with urls_show.ejs
+// GET /urls/:shortURL    :: Renders with urls_show.ejs. Only logged-in users have access
 
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.cookies["user_id"]] };
+
+  if(!req.cookies["user_id"]) {
+    res.redirect("/login");
+  } else {
   res.render("urls_show", templateVars)
+  }
 });
 
 
