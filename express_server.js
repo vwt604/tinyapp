@@ -17,6 +17,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
+const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 
@@ -25,6 +26,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(morgan('dev'));
 app.use(cookieParser());
+app.use(cookieSession({
+  name: 'w3d4-lecture',
+  keys: ['secret things', 'more secret things', 'chicken']
+}));
 
 app.listen(PORT, () => {
   console.log(`TinyApp is listening on port ${PORT}!`);
@@ -103,7 +108,7 @@ app.get("/", (req, res) => {
 });
 
 
-// // GET /urls.json
+// // // GET /urls.json
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase)
@@ -298,4 +303,5 @@ app.post("/login", (req, res) => {
     res.redirect(`/urls`); 
   }
 });
+
 
