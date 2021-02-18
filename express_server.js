@@ -82,7 +82,7 @@ app.get("/hello", (req, res) => {
 //GET /urls   :: Renders urls_index.ejs page
 
 app.get("/urls", (req, res) => {   
-  const templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"]};   //shortcut to look inside the views directory for any template files
+  const templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]]};   //shortcut to look inside the views directory for any template files
   res.render("urls_index", templateVars);
 });
 
@@ -127,7 +127,7 @@ app.post("/logout", (req, res) => {
 //GET: /urls/new    :: Renders page with urls_new.ejs
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {user_id: req.cookies["user_id"]}; 
+  const templateVars = {user: users[req.cookies["user_id"]]}; 
   res.render("urls_new", templateVars);
 });
 
@@ -138,7 +138,7 @@ app.get("/urls/new", (req, res) => {
 // GET /urls/:shortURL    :: Renders with urls_show.ejs
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user_id: req.cookies["user_id"] };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.cookies["user_id"]] };
   res.render("urls_show", templateVars)
 });
 
@@ -179,7 +179,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 //GET /register     :: renders register.ejs template
 app.get("/register", (req, res) => {
-  const templateVars = {user_id: req.cookies["user_id"]}; 
+  const templateVars = {user: users[req.cookies["user_id"]]}; 
   res.render("register", templateVars)
 });
 
@@ -194,7 +194,7 @@ app.post("/register", (req, res) => {
 
   const user_id = generateRandomString();
   const newUser = {
-    "id": user_id,
+    "user_id": user_id,
     "email": req.body.email,
     "password": req.body.password
   }
@@ -210,6 +210,8 @@ app.post("/register", (req, res) => {
   }
 
 });
+
+
 
 // app.post("/register", (req, res) => {
 
@@ -232,7 +234,7 @@ app.post("/register", (req, res) => {
 
 
 app.get("/login", (req, res) => {
-  const templateVars = {user_id: req.cookies["user_id"]}; 
+  const templateVars = {user: users[req.cookies["user_id"]]}; 
   res.render("login", templateVars)
 });
 
