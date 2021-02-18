@@ -101,13 +101,13 @@ app.post("/urls", (req, res) => {
 //POST /urls/login  :: Sets a cookie named username then redirects to "/urls"
 
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie('username', username);
+  const userID = req.body.userID;
+  res.cookie('userID', userID);
   // console.log(req.body);     
   res.redirect(`/urls`);    
 });
 
-//how to set entire object as a cookie? 
+
 
 
 //POST /urls/logout  :: Deletes username cookie then redirects to "/urls"
@@ -179,7 +179,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 //GET /register     :: renders register.ejs template
 app.get("/register", (req, res) => {
-  const templateVars = {user_id: user_id}; 
+  const templateVars = {user_id: req.cookies["user_id"]}; 
   res.render("register", templateVars)
 });
 
@@ -240,3 +240,5 @@ app.get("/login", (req, res) => {
 app.post("/register", (req, res) => {
   req.body.name
 });
+
+// user: users[req.cookies["user_id"]],
