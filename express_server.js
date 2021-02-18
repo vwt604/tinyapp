@@ -1,4 +1,13 @@
-//*NOTE 1) Reroute Edit button on /urls page 2) Fix /u/
+/*NOTES
+
+[x] only logged in users can create urls
+[x] redirect someone not logged in to login page
+[] add userID key to object 
+[] use userID key to track which URLs belong to which user 
+[] anyone can visit /u/:id (even when not logged in)
+
+
+*/
 
 //------------********  SET UP  *******------------//
 
@@ -42,6 +51,16 @@ function getUserbyEmail(email) {
     return users[key];
   }
 };
+
+function urlsForUser(id) {
+  let filteredUrls = {};
+  for (let url in urlDatabase) {
+    if (urlDatabase[url].userID === id) {
+      filteredUrls[url] = urlDatabase[url]
+    }
+  }
+  return filteredUrls;
+}
 
 
 //------------******** DATABASE *******------------//
@@ -100,12 +119,21 @@ app.get("/hello", (req, res) => {
 //------------  /urls  ------------//
 
 
-//GET /urls   :: Renders urls_index.ejs page
+//GET /urls   :: Renders urls_index.ejs page. Only logged-in users have access
 
 app.get("/urls", (req, res) => {   
-  const templateVars = { urls: urlDatabase, user: users[req.cookies["user_id"]]};   //shortcut to look inside the views directory for any template files
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+
+  if (!user) {
+    res.redirect("/login");
+  } else {
+  const templateVars = { urls: urlDatabase, user: user, filteredUrls: urlsForUser(userId)};   //shortcut to look inside the views directory for any template files
   res.render("urls_index", templateVars);
+  }
 });
+
+
 
 
 //POST /urls    :: Generates a random string, saves the string to the urlDatabase with longURL as value, then rediects to "/urls/:shortURL/"     
