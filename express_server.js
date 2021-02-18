@@ -183,15 +183,12 @@ app.get("/urls/new", (req, res) => {
 //------------  /urls/:shortURL  ------------//
 
 
-/* GET /urls/:shortURL    
-
-Only logged-in users have access.
-If url belongs to user, user can edit
-If url doesn't belong to user, user is redirected to /urls
-
-*/
+// GET /urls/:shortURL    :: Renders with urls_show.ejs. Only logged-in users have access
 
 app.get("/urls/:shortURL", (req, res) => {
+
+  // console.log(templateVars);
+
   if(!req.cookies["user_id"]) {
     res.redirect("/login");
   } else {
@@ -199,6 +196,7 @@ app.get("/urls/:shortURL", (req, res) => {
     if (Object.keys(users).includes(req.params.shortURL)){
       const templateVars = {
         longURL: urlDatabase[req.params.shortURL]['longURL'],
+        // shortURL: req.params.shortURL,
         user: users[req.cookies["user_id"]],
       };
     res.render("urls_show", templateVars)
