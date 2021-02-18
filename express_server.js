@@ -41,7 +41,18 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = {};
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
 
 // GET / 
 
@@ -71,7 +82,7 @@ app.get("/hello", (req, res) => {
 //GET /urls   :: Renders urls_index.ejs page
 
 app.get("/urls", (req, res) => {   
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"]};   //shortcut to look inside the views directory for any template files
+  const templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"]};   //shortcut to look inside the views directory for any template files
   res.render("urls_index", templateVars);
 });
 
@@ -96,12 +107,14 @@ app.post("/login", (req, res) => {
   res.redirect(`/urls`);    
 });
 
+//how to set entire object as a cookie? 
+
 
 //POST /urls/logout  :: Deletes username cookie then redirects to "/urls"
 
 app.post("/logout", (req, res) => {
-  const username = req.body.username;
-  res.clearCookie('username', username);
+  const user_id = req.body.user_id;
+  res.clearCookie('user_id', user_id);
   // console.log(req.body);     
   res.redirect(`/urls`);    
 });
@@ -114,7 +127,7 @@ app.post("/logout", (req, res) => {
 //GET: /urls/new    :: Renders page with urls_new.ejs
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {username: req.cookies["username"]}; 
+  const templateVars = {user_id: req.cookies["user_id"]}; 
   res.render("urls_new", templateVars);
 });
 
@@ -125,7 +138,7 @@ app.get("/urls/new", (req, res) => {
 // GET /urls/:shortURL    :: Renders with urls_show.ejs
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user_id: req.cookies["user_id"] };
   res.render("urls_show", templateVars)
 });
 
@@ -166,7 +179,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 //GET /register     :: renders register.ejs template
 app.get("/register", (req, res) => {
-  const templateVars = {username: req.cookies["username"]}; 
+  const templateVars = {user_id: user_id}; 
   res.render("register", templateVars)
 });
 
@@ -179,9 +192,9 @@ app.post("/register", (req, res) => {
   res.cookie("email", req.body.email);
   res.cookie("password", req.body.password);
 
-  const userID = generateRandomString();
+  const user_id = generateRandomString();
   const newUser = {
-    "id": userID,
+    "id": user_id,
     "email": req.body.email,
     "password": req.body.password
   }
@@ -189,10 +202,10 @@ app.post("/register", (req, res) => {
   if(!newUser.email || !newUser.password) {
     res.status(400).render('400'); //TODO: update 400 page
   } else if (checkExistingEmail(req.body.email)) {
-    res.status(400).render('400'); //TODO: update 400 page
+    res.status(400).render('400'); //TODO: update 400 page or change to message?
   } else {
-    users[userID] = newUser;
-    res.cookie('userID', userID)
+    users[user_id] = newUser;
+    res.cookie('user_id', user_id)
     res.redirect(`/urls`); 
   }
 
@@ -219,7 +232,7 @@ app.post("/register", (req, res) => {
 
 
 app.get("/login", (req, res) => {
-  const templateVars = {username: req.cookies["username"]}; 
+  const templateVars = {user_id: req.cookies["user_id"]}; 
   res.render("login", templateVars)
 });
 
