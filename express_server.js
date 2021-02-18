@@ -1,6 +1,6 @@
 //*NOTE 1) Reroute Edit button on /urls page 2) Fix /u/
 
-//------------  SET UP  ------------//
+//------------********  SET UP  *******------------//
 
 const express = require("express");
 const app = express();
@@ -20,7 +20,7 @@ app.listen(PORT, () => {
 });
 
 
-// ******** ---------  CODE --------- ******** // 
+//------------********  FUNCTIONS  *******------------//
 
 
 function generateRandomString() {
@@ -29,12 +29,22 @@ function generateRandomString() {
 
 
 function checkExistingEmail(email) {
-  for (var userID in users) {
-    if(users[userID].email === email) return true
+  for (var key in users) {
+    if(users[key].email === email) 
+    return true;
   }
-  return false
+  return false;
 };
 
+function getUserbyEmail(email) {
+  for (var key in users) {
+    if(users[key].email === email) 
+    return users[key];
+  }
+};
+
+
+//------------******** DATABASE *******------------//
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -53,6 +63,12 @@ const users = {
     password: "dishwasher-funk"
   }
 }
+
+
+
+
+//------------********  ROUTES  *******------------//
+
 
 // GET / 
 
@@ -96,18 +112,6 @@ app.post("/urls", (req, res) => {
   console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);         
 });
-
-
-//POST /urls/login  :: Sets a cookie named username then redirects to "/urls"
-
-app.post("/login", (req, res) => {
-  const userID = req.body.userID;
-  res.cookie('userID', userID);
-  // console.log(req.body);     
-  res.redirect(`/urls`);    
-});
-
-
 
 
 //POST /urls/logout  :: Deletes username cookie then redirects to "/urls"
@@ -200,9 +204,9 @@ app.post("/register", (req, res) => {
   }
 
   if(!newUser.email || !newUser.password) {
-    res.status(400).render('400'); //TODO: update 400 page
+    res.status(400).send('Please enter valid email and password'); 
   } else if (checkExistingEmail(req.body.email)) {
-    res.status(400).render('400'); //TODO: update 400 page or change to message?
+    res.status(400).send('Email already used'); //TODO: update 400 page or change to message?
   } else {
     users[user_id] = newUser;
     res.cookie('user_id', user_id)
@@ -210,24 +214,6 @@ app.post("/register", (req, res) => {
   }
 
 });
-
-
-
-// app.post("/register", (req, res) => {
-
-//   res.cookie("email", req.body.email);
-//   res.cookie("password", req.body.password);
-
-//   const userID = generateRandomString();
-//   const newUser = {
-//     "id": userID,
-//     "email": req.cookies.email,
-//     "password": req.cookies.password
-//   }
-
-//   users[userID] = newUser;
-//   res.redirect(`/urls`);    
-// });
 
 
 //------------  /login  ------------//
@@ -238,9 +224,19 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars)
 });
 
-
-app.post("/register", (req, res) => {
-  req.body.name
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  
+  const user = getUserbyEmail(email)
+  console.log('email', email)
+  if(!user) {
+    res.status(403).send('This account does not exsist'); 
+  } else if (user.password !== password) {
+    res.status(403).send('Incorrect password'); //TODO: update 400 page or change to message?
+  } else {
+    res.cookie('user_id', user.id)
+    res.redirect(`/urls`); 
+  }
 });
 
-// user: users[req.cookies["user_id"]],
