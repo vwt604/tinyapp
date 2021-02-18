@@ -187,16 +187,15 @@ app.post("/register", (req, res) => {
   }
 
   if(!newUser.email || !newUser.password) {
-    res.status(400).render('400');
+    res.status(400).render('400'); //TODO: update 400 page
   } else if (checkExistingEmail(req.body.email)) {
-    res.status(400).render('400');
+    res.status(400).render('400'); //TODO: update 400 page
   } else {
     users[userID] = newUser;
     res.cookie('userID', userID)
     res.redirect(`/urls`); 
   }
 
-     
 });
 
 // app.post("/register", (req, res) => {
