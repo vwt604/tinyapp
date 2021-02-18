@@ -6,6 +6,7 @@
 [x] use userID key to track which URLs belong to which user 
 [x] anyone can visit /u/:id (even when not logged in)
 [] fix problem: new urls not posting to /urls...something with getUsersUrl function...
+[] bug: new URLS not posting to database
 
 
 */
@@ -70,6 +71,7 @@ const urlsForUser = function(id) {
 };
 
 
+
 //------------******** DATABASE *******------------//
 
 const urlDatabase = {
@@ -128,33 +130,26 @@ app.get("/hello", (req, res) => {
 
 //GET /urls   :: Renders urls_index.ejs page. Only logged-in users have access
 
-app.get("/urls", (req, res) => {   
-  const userId = req.cookies["user_id"];
-  const user = users[userId];
-
-  if (!user) {
-    res.redirect("/login");
-  } else {
-  const templateVars = { urls: urlDatabase, 
-    user: users[req.cookies["user_id"]], 
-    urls: urlsForUser(req.cookies["user_id"])};  //shortcut to look inside the views directory for any template files
-    // console.log(urlsForUser(req.cookies["user_id"]));
-    // console.log(users[req.cookies["user_id"]])
-    console.log('test',urlsForUser('b6UTxQ'));
-  res.render("urls_index", templateVars);
-  }
+app.get("/urls", (req, res) => {
+  const filteredUrls = urlsForUser(req.cookies["user_id"]); //filters so user can only see their own urls
+  let templateVars = {
+    urls: filteredUrls,  
+    user: users[req.cookies["user_id"]], //aka userRandomID
+  };
+  res.render('urls_index', templateVars);
 });
 
 
 
-
-//POST /urls    :: Generates a random string, saves the string to the urlDatabase with longURL as value, then rediects to "/urls/:shortURL/"     
+//POST /urls    :: Saves new url to urlDatabase
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = {};
-  urlDatabase[shortURL].longURL = req.body.longURL;
-  console.log(urlDatabase);
-  res.redirect(`/urls/${shortURL}`);         
+  urlDatabase[shortURL] = {        
+    longURL: req.body.longURL,
+    userID: req.cookies["user_id"],  //aka userRandomID
+  };
+  // console.log(urlDatabase)
+  res.redirect(`/urls/${shortURL}`);
 });
 
 
@@ -188,21 +183,28 @@ app.get("/urls/new", (req, res) => {
 //------------  /urls/:shortURL  ------------//
 
 
-// GET /urls/:shortURL    :: Renders with urls_show.ejs. Only logged-in users have access
+/* GET /urls/:shortURL    
+
+Only logged-in users have access.
+If url belongs to user, user can edit
+If url doesn't belong to user, user is redirected to /urls
+
+*/
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    urlUserID: urlDatabase[req.params.shortURL].userID,
-    user: users[req.cookies["user_id"]],
-  };
-  // console.log(templateVars);
-
   if(!req.cookies["user_id"]) {
     res.redirect("/login");
   } else {
-  res.render("urls_show", templateVars)
+    const user = urlsForUser(req.cookies['user_id'])  
+    if (Object.keys(users).includes(req.params.shortURL)){
+      const templateVars = {
+        longURL: urlDatabase[req.params.shortURL]['longURL'],
+        user: users[req.cookies["user_id"]],
+      };
+    res.render("urls_show", templateVars)
+    } else {
+      res.redirect("/urls")
+    }
   }
 });
 
@@ -211,10 +213,12 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL/", (req, res) => {
   // console.log(req.body);
-  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+  urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.cookies["user_id"] };
+
   res.redirect(`/urls`);        
 });
 
+// b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
 
 
 //POST /urls/:shortURL/delete   :: Deletes shortURL from database, then redirects to "/urls"

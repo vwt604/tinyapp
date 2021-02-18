@@ -18,7 +18,6 @@
               This link is not in your personal inventory.
               Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to view your personal collection of Short URLs.
           </div>
-        <% } else if (user.id !== urlUserID) { %>
         <% } %>
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
