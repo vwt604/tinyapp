@@ -47,8 +47,8 @@ function getUserbyEmail(email) {
 //------------******** DATABASE *******------------//
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 const users = { 
@@ -61,6 +61,11 @@ const users = {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "dishwasher-funk"
+  },
+  "user3RandomID": {
+    id: "user3RandomID", 
+    email: "meow@meow.ca", 
+    password: "meow"
   }
 }
 
@@ -77,11 +82,11 @@ app.get("/", (req, res) => {
 });
 
 
-// GET /urls.json
+// // GET /urls.json
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase)
-})
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase)
+// })
 
 // GET /hello
 
@@ -128,11 +133,16 @@ app.post("/logout", (req, res) => {
 //------------  /urls/new  ------------//
 
 
-//GET: /urls/new    :: Renders page with urls_new.ejs
+//GET: /urls/new    :: Renders page with urls_new.ejs.
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {user: users[req.cookies["user_id"]]}; 
-  res.render("urls_new", templateVars);
+  const templateVars = {user: users[req.cookies["user_id"]]};
+  
+  if(!req.cookies["user_id"]) {
+    res.redirect("/login");
+  } else {
+    res.render("urls_new", templateVars);
+  }
 });
 
 
@@ -178,6 +188,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 
+
 //------------  /register  ------------//
 
 
@@ -188,15 +199,6 @@ app.get("/register", (req, res) => {
 });
 
 
-<<<<<<< HEAD
-//POST /urls/logout   
-
-app.post("/logout", (req, res) => {
-  const username = req.body.username;
-  res.clearCookie('username', username);
-  
-  res.redirect(`/urls`);    
-=======
 
 //POST /register    :: adds new user object to global users object
 
@@ -222,7 +224,6 @@ app.post("/register", (req, res) => {
     res.redirect(`/urls`); 
   }
 
->>>>>>> feature/user-registration
 });
 
 
