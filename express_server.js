@@ -6,7 +6,14 @@
 [x] anyone can visit /u/:id (even when not logged in)
 [x] fix problem: new urls not posting to /urls...something with getUsersUrl function...
 [x] bug: new URLS not posting to database
-[] bug in Registration - checkexistingEmail helper
+[] bug in Registration - checkexistingEmail helper - POST /register
+
+[] urls/:id if user is not logged in:
+returns HTML with a relevant error message
+if user is logged it but does not own the URL with the given ID:
+returns HTML with a relevant error message
+
+[]
 */
 
 //------------********  SET UP  *******------------//
@@ -54,17 +61,17 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: testPassword
+    password: bcrypt.hashSync('123', 10)
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync('moo', 10)
   },
   "user3RandomID": {
     id: "user3RandomID", 
     email: "meow@meow.ca", 
-    password: "meow"
+    password: bcrypt.hashSync('meow', 10)
   }
 }
 
