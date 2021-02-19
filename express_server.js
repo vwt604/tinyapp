@@ -91,12 +91,16 @@ app.get("/urls", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = {
-    longURL: req.body.longURL,
-    userID: req.session.user_id
-  };
-  res.redirect(`/urls/${shortURL}`);
+  if (!req.session.user_id) {
+    res.status(400).send("Please login to use TinyApp's features.");
+  } else {
+    const shortURL = generateRandomString();
+    urlDatabase[shortURL] = {
+      longURL: req.body.longURL,
+      userID: req.session.user_id
+    };
+    res.redirect(`/urls/${shortURL}`);
+  }
 });
 
 
@@ -134,7 +138,7 @@ app.get("/urls/:shortURL", (req, res) => {
       }
     }
   } else {
-    res.status(400).send("This TinyURL does not exist.");
+    res.status(404).send("This TinyURL does not exist.");
   }
 });
 
@@ -154,7 +158,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   if (longURL === undefined) {
-    res.send(302);
+    res.send(404).send("This URL does not exist");
   } else {
     res.redirect(longURL);
   }
@@ -162,8 +166,12 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.get("/register", (req, res) => {
-  const templateVars = {user: users[req.session.user_id]};
-  res.render("register", templateVars);
+  if (!req.session.user_id) {
+    const templateVars = {user: users[req.session.user_id]};
+    res.render("register", templateVars);
+  } else {
+    res.redirect(`/urls`)
+  }
 });
 
 

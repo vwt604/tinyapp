@@ -15,10 +15,9 @@
       <div class="card-body">
         <% if (!user) { %>
           <div class="alert alert-warning" role="alert">
-            This link is taken by another user. 
-            Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to access.
-        </div>
-        <% } %>
+              Please login or register</a>
+            </div>
+        <% } else { %>
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
@@ -29,6 +28,8 @@
       <input type="text" name="newURL" placeholder="http://" style="width: 300px; margin: 1em">
       <button type="submit" class="btn btn-primary">Update</button>
       </form>
+      <% } %>
+      <% } %>
     </div>
       
     <div class="card-footer text-muted"></div>
