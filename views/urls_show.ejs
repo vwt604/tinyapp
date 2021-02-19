@@ -15,8 +15,9 @@
       <div class="card-body">
         <% if (!user) { %>
           <div class="alert alert-warning" role="alert">
-              This link is not in your personal inventory
-          </div>
+            This link is taken by another user. 
+            Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to access.
+        </div>
         <% } %>
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
