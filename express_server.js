@@ -185,10 +185,10 @@ app.post("/register", (req, res) => {
     "email": email,
     "password": hashedPassword
   };
-  if (!newUser.email || !newUser.password) {
+  if (!newUser.email || !newUser.password) {  //if false email or password, return error message
     res.status(400).send('Please enter valid email and password');
-  } else if (checkExistingEmail(req.body.email)) {
-    res.status(400).send('Email already used');
+  } else if (checkExistingEmail(req.body.email, users)) {
+    res.status(400).send('Email already used'); //
   } else {
     users[user_id] = newUser;
     req.session.user_id = user_id;

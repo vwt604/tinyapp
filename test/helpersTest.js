@@ -16,6 +16,12 @@ const testUsers = {
   }
 };
 
+const testUrlDatabase= {
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "userRandomID" }
+};
+
+
 describe('generateRandomString', function() {
 
   it('should return a string with six characters', function() {
@@ -39,7 +45,7 @@ describe('checkExistingEmail', function() {
     assert.equal(existingEmail, expectedOutput);
   });
 
-  it('should return false if email does not correspond to a user in the database', function() {
+  it('should return false if email does not exist in the database', function() {
     const nonExistingEmail = checkExistingEmail("nobueno@nowhere.com", testUsers);
     const expectedOutput = false;
     assert.equal(nonExistingEmail, expectedOutput);
@@ -48,8 +54,8 @@ describe('checkExistingEmail', function() {
 
 
 describe('getUserbyEmail', function() {
-  it('should return a user with valid email', function() {
-    const user = getUserByEmail("user@example.com", users)
+  it('should return a users ID with the provided email', function() {
+    const user = getUserbyEmail("user@example.com", testUsers)
     const expectedOutput = "userRandomID";
     assert.equal(user, expectedOutput);
   });
@@ -65,15 +71,15 @@ describe('getUserbyEmail', function() {
 describe('urlsForUser', function() {
 
   it('should return an object of url information specific to the given user ID', function() {
-    const specificUrls = urlsForUser("user1RandomID", testUrlDatabase);
+    const specificUrls = urlsForUser("userRandomID", testUrlDatabase);
     const expectedOutput = {
-      "bfjqot": {
-        longUrl: "http://www.lighthouselabs.ca",
-        userID: "user1RandomID"
+      "b6UTxQ": {
+        longURL: "https://www.tsn.ca",
+        userID: "userRandomID"
       },
-      "htlams": {
-        longUrl: "http://www.google.com",
-        userID: "user1RandomID"
+      "i3BoGr": {
+        longURL: "https://www.google.ca",
+        userID: "userRandomID"
       }
     };
     assert.deepEqual(specificUrls, expectedOutput);
