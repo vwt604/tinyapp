@@ -34,13 +34,13 @@ describe('generateRandomString', function() {
 describe('checkExistingEmail', function() {
   
   it('should return true if email is in the database', function() {
-    const existingEmail = checkExistingEmail("user1@example.com", testUsers);
+    const existingEmail = checkExistingEmail("user@example.com", testUsers);
     const expectedOutput = true;
     assert.equal(existingEmail, expectedOutput);
   });
 
   it('should return false if email does not correspond to a user in the database', function() {
-    const nonExistingEmail = checkExistingEmail("fake_email@test.com", testUsers);
+    const nonExistingEmail = checkExistingEmail("nobueno@nowhere.com", testUsers);
     const expectedOutput = false;
     assert.equal(nonExistingEmail, expectedOutput);
   });

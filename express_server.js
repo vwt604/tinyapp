@@ -1,8 +1,14 @@
+/*
+[] Fix POST registration
+
+
+*/
+
 //------------********  IMPORTS  *******------------//
 
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080; 
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
@@ -111,20 +117,24 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls/:shortURL", (req, res) => {
-  if (!req.session.user_id) {
-    res.redirect("/login");
-  } else {
-    const url = urlDatabase[req.params.shortURL];
-    if (url.userID === req.session.user_id) {
-      const templateVars = {
-        longURL: urlDatabase[req.params.shortURL]['longURL'],
-        shortURL: req.params.shortURL,
-        user: users[req.session.user_id],
-      };
-      res.render("urls_show", templateVars);
+  if(urlDatabase[req.params.shortURL]) {
+    if (!req.session.user_id) {
+      res.redirect("/login");
     } else {
-      res.redirect("/urls");
+      const url = urlDatabase[req.params.shortURL];
+      if (url.userID === req.session.user_id) {
+        const templateVars = {
+          longURL: urlDatabase[req.params.shortURL]['longURL'],
+          shortURL: req.params.shortURL,
+          user: users[req.session.user_id],
+        };
+        res.render("urls_show", templateVars);
+      } else {
+        res.redirect("/urls");
+      }
     }
+  } else {
+    res.status(400).send("Tiny URL does not exist.");
   }
 });
 
