@@ -6,6 +6,7 @@
 [x] anyone can visit /u/:id (even when not logged in)
 [x] fix problem: new urls not posting to /urls...something with getUsersUrl function...
 [x] bug: new URLS not posting to database
+[] bug in Registration - checkexistingEmail helper
 */
 
 //------------********  SET UP  *******------------//
@@ -37,36 +38,7 @@ app.listen(PORT, () => {
 //------------********  FUNCTIONS  *******------------//
 
 
-const generateRandomString = function() {
-  return Math.random().toString(16).substring(2, 8);
-}
-
-
-const checkExistingEmail = function(email) {
-  for (var key in users) {
-    if(users[key].email === email) 
-    return true;
-  }
-  return false;
-};
-
-const getUserbyEmail = function(email, database) {
-  for (var key in database) {
-    if(database[key].email === email) 
-    return database[key].id;
-  }
-};
-
-const urlsForUser = function(id, urlDatabase) {
-  const userUrls = {};
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userUrls[shortURL] = urlDatabase[shortURL];
-    }
-  } 
-  return userUrls;
-};
-
+const { generateRandomString, checkExistingEmail, getUserbyEmail, urlsForUser } = require("./helpers")
 
 
 //------------******** DATABASE *******------------//
