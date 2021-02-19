@@ -37,12 +37,12 @@ app.listen(PORT, () => {
 //------------********  FUNCTIONS  *******------------//
 
 
-function generateRandomString() {
+const generateRandomString = function() {
   return Math.random().toString(16).substring(2, 8);
 }
 
 
-function checkExistingEmail(email) {
+const checkExistingEmail = function(email) {
   for (var key in users) {
     if(users[key].email === email) 
     return true;
@@ -50,7 +50,7 @@ function checkExistingEmail(email) {
   return false;
 };
 
-function getUserbyEmail(email, database) {
+const getUserbyEmail = function(email, database) {
   for (var key in database) {
     if(database[key].email === email) 
     return database[key].id;
