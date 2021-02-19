@@ -1,9 +1,3 @@
-/*
-[] Fix POST registration
-
-
-*/
-
 //------------********  IMPORTS  *******------------//
 
 const express = require("express");
@@ -21,8 +15,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(morgan('dev'));
 app.use(cookieSession({
-  name: 'w3d4-lecture',
-  keys: ['secret things', 'more secret things', 'chicken']
+  name: 'joey',
+  keys: ['secret things', 'more secret things']
 }));
 
 app.listen(PORT, () => {
@@ -46,17 +40,17 @@ const urlDatabase = {
 const users = {
   "userRandomID": {
     id: "userRandomID",
-    email: "user@example.com",
+    email: "joey@friends.com",
     password: bcrypt.hashSync('123', 10)
   },
   "user2RandomID": {
     id: "user2RandomID",
-    email: "user2@example.com",
+    email: "phoebe@friends.com",
     password: bcrypt.hashSync('moo', 10)
   },
   "user3RandomID": {
     id: "user3RandomID",
-    email: "meow@meow.ca",
+    email: "monica@meow.ca",
     password: bcrypt.hashSync('meow', 10)
   }
 };
@@ -64,20 +58,17 @@ const users = {
 
 //------------********  ROUTES  *******------------//
 
-
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+app.get("/", (req, res) => {
+  if (!req.session.user_id) {
+    res.redirect(`/login`);
+  } else {
+    res.redirect(`/urls`);
+  }
+})
 
 
 app.get("/urls", (req, res) => {
@@ -87,26 +78,6 @@ app.get("/urls", (req, res) => {
     user: users[req.session.user_id],
   };
   res.render('urls_index', templateVars);
-});
-
-
-app.post("/urls", (req, res) => {
-  if (!req.session.user_id) {
-    res.status(400).send("Please login to use TinyApp's features.");
-  } else {
-    const shortURL = generateRandomString();
-    urlDatabase[shortURL] = {
-      longURL: req.body.longURL,
-      userID: req.session.user_id
-    };
-    res.redirect(`/urls/${shortURL}`);
-  }
-});
-
-
-app.post("/logout", (req, res) => {
-  req.session.user_id = null;
-  res.redirect(`/urls`);
 });
 
 
@@ -143,18 +114,6 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 
-app.post("/urls/:shortURL/", (req, res) => {
-  urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.session.user_id };
-  res.redirect(`/urls`);
-});
-
-
-app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect(`/urls`);
-});
-
-
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   if (longURL === undefined) {
@@ -172,6 +131,12 @@ app.get("/register", (req, res) => {
   } else {
     res.redirect(`/urls`)
   }
+});
+
+
+app.get("/login", (req, res) => {
+  const templateVars = {user: users[req.session.user_id]};
+  res.render("login", templateVars);
 });
 
 
@@ -197,12 +162,6 @@ app.post("/register", (req, res) => {
 });
 
 
-app.get("/login", (req, res) => {
-  const templateVars = {user: users[req.session.user_id]};
-  res.render("login", templateVars);
-});
-
-
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -215,4 +174,36 @@ app.post("/login", (req, res) => {
   } else {
     res.status(403).send('Incorrect password');
   }
+});
+
+
+app.post("/logout", (req, res) => {
+  req.session.user_id = null;
+  res.redirect(`/urls`);
+});
+
+
+app.post("/urls", (req, res) => {
+  if (!req.session.user_id) {
+    res.status(400).send("Please login to use TinyApp's features.");
+  } else {
+    const shortURL = generateRandomString();
+    urlDatabase[shortURL] = {
+      longURL: req.body.longURL,
+      userID: req.session.user_id
+    };
+    res.redirect(`/urls/${shortURL}`);
+  }
+});
+
+
+app.post("/urls/:shortURL/", (req, res) => {
+  urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.session.user_id };
+  res.redirect(`/urls`);
+});
+
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  res.redirect(`/urls`);
 });
