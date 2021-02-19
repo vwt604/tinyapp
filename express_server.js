@@ -46,12 +46,12 @@ const users = {
   "user2RandomID": {
     id: "user2RandomID",
     email: "phoebe@friends.com",
-    password: bcrypt.hashSync('moo', 10)
+    password: bcrypt.hashSync('meow', 10)
   },
   "user3RandomID": {
     id: "user3RandomID",
     email: "monica@meow.ca",
-    password: bcrypt.hashSync('meow', 10)
+    password: bcrypt.hashSync('moo', 10)
   }
 };
 
@@ -135,8 +135,13 @@ app.get("/register", (req, res) => {
 
 
 app.get("/login", (req, res) => {
-  const templateVars = {user: users[req.session.user_id]};
-  res.render("login", templateVars);
+
+  if (!req.session.user_id) {
+    const templateVars = {user: users[req.session.user_id]};
+    res.render("login", templateVars);
+  } else {
+    res.redirect(`/urls`)
+  }  
 });
 
 
@@ -207,3 +212,5 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect(`/urls`);
 });
+
+
