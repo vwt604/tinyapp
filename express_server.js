@@ -119,7 +119,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   if(urlDatabase[req.params.shortURL]) {
     if (!req.session.user_id) {
-      res.redirect("/login");
+      res.status(400).send("Please login to use TinyApp's features.");
     } else {
       const url = urlDatabase[req.params.shortURL];
       if (url.userID === req.session.user_id) {
@@ -130,11 +130,11 @@ app.get("/urls/:shortURL", (req, res) => {
         };
         res.render("urls_show", templateVars);
       } else {
-        res.redirect("/urls");
+        res.status(400).send("Oops. This TinyURL is already taken. Please create a new one.");
       }
     }
   } else {
-    res.status(400).send("Tiny URL does not exist.");
+    res.status(400).send("This TinyURL does not exist.");
   }
 });
 
