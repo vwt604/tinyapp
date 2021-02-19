@@ -4,8 +4,8 @@
 [] add userID key to object  
 [x] use userID key to track which URLs belong to which user 
 [x] anyone can visit /u/:id (even when not logged in)
-[] fix problem: new urls not posting to /urls...something with getUsersUrl function...
-[] bug: new URLS not posting to database
+[x] fix problem: new urls not posting to /urls...something with getUsersUrl function...
+[x] bug: new URLS not posting to database
 */
 
 //------------********  SET UP  *******------------//
@@ -50,14 +50,14 @@ function checkExistingEmail(email) {
   return false;
 };
 
-function getUserbyEmail(email) {
+function getUserbyEmail(email, database) {
   for (var key in users) {
     if(users[key].email === email) 
     return users[key];
   }
 };
 
-const urlsForUser = function(id) {
+const urlsForUser = function(id, urlDatabase) {
   const userUrls = {};
   for (const shortURL in urlDatabase) {
     if (urlDatabase[shortURL].userID === id) {
@@ -130,7 +130,7 @@ app.get("/hello", (req, res) => {
 //GET /urls   :: Renders urls_index.ejs page. Only logged-in users have access
 
 app.get("/urls", (req, res) => {
-  const filteredUrls = urlsForUser(req.session.user_id); //filters so user can only see their own urls
+  const filteredUrls = urlsForUser(req.session.user_id, urlDatabase); //filters so user can only see their own urls
   let templateVars = {
     urls: filteredUrls,  
     user: users[req.session.user_id], //aka userRandomID
