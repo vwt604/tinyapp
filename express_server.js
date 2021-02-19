@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(morgan('dev'));
 app.use(cookieSession({
-  name: 'joey',
+  name: 'TinyURL',
   keys: ['secret things', 'more secret things']
 }));
 
@@ -158,7 +158,7 @@ app.post("/register", (req, res) => {
   if (!newUser.email || !newUser.password) {  //if false email or password, return error message
     res.status(400).send('Please enter a valid email and password');
   } else if (checkExistingEmail(req.body.email, users)) {
-    res.status(400).send('This email is already in use. Please login or register with another email'); //
+    res.status(400).send('This email is already in use. Please login or register with another email.'); //
   } else {
     users[user_id] = newUser;
     req.session.user_id = user_id;
@@ -183,7 +183,7 @@ app.post("/login", (req, res) => {
 
 
 app.post("/logout", (req, res) => {
-  req.session.user_id = null;
+  req.session = null;
   res.redirect(`/urls`);
 });
 
