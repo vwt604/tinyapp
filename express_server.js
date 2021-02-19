@@ -33,25 +33,29 @@ const { generateRandomString, checkExistingEmail, getUserbyEmail, urlsForUser } 
 //------------******** DATABASES *******------------//
 
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "userRandomID" }
+  b6UTxQ: { longURL: "https://www.pizza.ca", userID: "userRandomID" },
+  i3fewr: { longURL: "https://www.google.ca", userID: "userRandomID" },
+  v38djr: { longURL: "https://www.facebook.com", userID: "userRandomID" },
+  c7wham: { longURL: "https://www.youtube.com", userID: "userRandomID" },
+  xshdn2: { longURL: "https://www.lighthouselabs.com", userID: "user2RandomID" },
+  j8ksbs: { longURL: "https://www.codecademy.com", userID: "user2RandomID" }
 };
 
 const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "joey@friends.com",
-    password: bcrypt.hashSync('123', 10)
+    password: bcrypt.hashSync('how-u-doin', 10)
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "phoebe@friends.com",
-    password: bcrypt.hashSync('meow', 10)
+    password: bcrypt.hashSync('smelly-cat', 10)
   },
   "user3RandomID": {
     id: "user3RandomID",
-    email: "monica@meow.ca",
-    password: bcrypt.hashSync('moo', 10)
+    email: "chandler@friends.com",
+    password: bcrypt.hashSync('whats-my-job', 10)
   }
 };
 
