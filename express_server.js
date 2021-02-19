@@ -279,7 +279,7 @@ app.post("/register", (req, res) => {
     res.status(400).send('Email already used'); //TODO: update 400 page or change to message?
   } else {
     users[user_id] = newUser;
-    req.session.user_id = user.id;
+    req.session.user_id = user_id;
     res.redirect(`/urls`); 
   }
 
