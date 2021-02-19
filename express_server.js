@@ -51,9 +51,9 @@ function checkExistingEmail(email) {
 };
 
 function getUserbyEmail(email, database) {
-  for (var key in users) {
-    if(users[key].email === email) 
-    return users[key];
+  for (var key in database) {
+    if(database[key].email === email) 
+    return database[key].id;
   }
 };
 
@@ -298,11 +298,11 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   // const hashedPassword = bcrypt.hashSync(password, 10);
   
-  const user = getUserbyEmail(email)
+  const user = getUserbyEmail(email, users)
   if(!user) {
     res.status(403).send('This account does not exist'); 
-  } else if (bcrypt.compareSync(password, user.password)) {
-    req.session.user_id = user.id;
+  } else if (bcrypt.compareSync(password, users[user].password)) {
+    req.session.user_id = users[user].id;
     res.redirect(`/urls`); 
   } else {
     res.status(403).send('Incorrect password'); //TODO: update 400 page or change to message?
