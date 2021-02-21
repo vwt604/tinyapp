@@ -19,10 +19,6 @@ app.use(cookieSession({
   keys: ['secret things', 'more secret things']
 }));
 
-app.listen(PORT, () => {
-  console.log(`TinyApp is listening on port ${PORT}!`);
-});
-
 
 //------------********  HELPERS *******------------//
 
@@ -218,3 +214,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 
+app.listen(PORT, () => {
+  console.log(`TinyApp is listening on port ${PORT}!`);
+});
