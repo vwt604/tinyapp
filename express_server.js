@@ -8,9 +8,6 @@ const bcrypt = require('bcryptjs');
 
 const { generateRandomString, checkExistingEmail, getUserbyEmail, urlsForUser } = require("./helpers");
 
-
-//------------********  MIDDLEWARE  *******------------//
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(morgan('dev'));
@@ -19,8 +16,6 @@ app.use(cookieSession({
   keys: ['secret things', 'more secret things']
 }));
 
-
-//------------******** DATABASES *******------------//
 
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.pizza.ca", userID: "userRandomID" },
