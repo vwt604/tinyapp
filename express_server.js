@@ -18,7 +18,7 @@ app.use(cookieSession({
 
 
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.pizza.ca", userID: "userRandomID" },
+  b6UTxQ: { longURL: "https://www.pizza.com", userID: "userRandomID" },
   i3fewr: { longURL: "https://www.google.ca", userID: "userRandomID" },
   v38djr: { longURL: "https://www.facebook.com", userID: "userRandomID" },
   c7wham: { longURL: "https://www.youtube.com", userID: "userRandomID" },
@@ -105,7 +105,9 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
-  if (longURL === undefined) {
+  if (!req.session.user_id) {
+    res.status(400).send("Please login to use TinyApp's features.");
+    } else if (longURL === undefined) {
     res.send(404).send("This URL does not exist");
   } else {
     res.redirect(longURL);
@@ -175,7 +177,6 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect(`/urls`);
-  console.log(users)
 });
 
 
