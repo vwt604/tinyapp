@@ -1,5 +1,3 @@
-//------------********  IMPORTS  *******------------//
-
 const express = require("express");
 const app = express();
 const PORT = 8080; 
@@ -7,6 +5,8 @@ const morgan = require('morgan');
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
+
+const { generateRandomString, checkExistingEmail, getUserbyEmail, urlsForUser } = require("./helpers");
 
 
 //------------********  MIDDLEWARE  *******------------//
@@ -18,12 +18,6 @@ app.use(cookieSession({
   name: 'TinyURL',
   keys: ['secret things', 'more secret things']
 }));
-
-
-//------------********  HELPERS *******------------//
-
-
-const { generateRandomString, checkExistingEmail, getUserbyEmail, urlsForUser } = require("./helpers");
 
 
 //------------******** DATABASES *******------------//
@@ -151,18 +145,19 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
   const newUser = {
-    "user_id": user_id,
+    "id": user_id,
     "email": email,
     "password": hashedPassword
   };
-  if (!newUser.email || !newUser.password) {  //if false email or password, return error message
+  if (!newUser.email || !newUser.password) {  
     res.status(400).send('Please enter a valid email and password');
   } else if (checkExistingEmail(req.body.email, users)) {
-    res.status(400).send('This email is already in use. Please login or register with another email.'); //
+    res.status(400).send('This email is already in use. Please login or register with another email.'); 
   } else {
     users[user_id] = newUser;
     req.session.user_id = user_id;
     res.redirect(`/urls`);
+    // console.log(users);
   }
 });
 
@@ -185,6 +180,7 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect(`/urls`);
+  console.log(users)
 });
 
 
