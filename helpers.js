@@ -4,7 +4,7 @@ const generateRandomString = function() {
 
 
 const checkExistingEmail = function(email, database) {
-  for (var key in database) {
+  for (const key in database) {
     if(database[key].email === email) 
     return true;
   }
@@ -12,7 +12,7 @@ const checkExistingEmail = function(email, database) {
 };
 
 const getUserbyEmail = function(email, database) {
-  for (var key in database) {
+  for (const key in database) {
     if(database[key].email === email) 
     return database[key].id;
   }

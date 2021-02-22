@@ -4,7 +4,7 @@
 [] POST /urls/:id/delete : remove access from non-owner
 [] GET /urls/id change message to "You don't own this link"
 [] GET /u/:id crashes TypeError: Cannot read property 'longURL' of undefined" error.
-[] POST /registration : users can registter without password : There should be a check to make sure that they don't register with just email and no password.
+[x] POST /registration : users can registter without password : There should be a check to make sure that they don't register with just email and no password.
 
 [] Add .DS_Store to gitignore
 [] Remove cookie-parser from package.json
@@ -62,7 +62,7 @@ const users = {
 };
 
 
-//------------********  ROUTES  *******------------//
+//------------********  ROUTES: GET  *******------------//
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -79,7 +79,7 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const filteredUrls = urlsForUser(req.session.user_id, urlDatabase);
-  let templateVars = {
+  const templateVars = {
     urls: filteredUrls,
     user: users[req.session.user_id],
   };
@@ -111,7 +111,7 @@ app.get("/urls/:shortURL", (req, res) => {
         };
         res.render("urls_show", templateVars);
       } else {
-        res.status(400).send("Oops. This TinyURL is already taken. Please create a new one.");
+        res.status(400).send("Sorry, you don't own this link. You can find your links at 'My URLS'.");
       }
     }
   } else {
@@ -159,6 +159,14 @@ app.get("/urls/:shortURL/delete", (req, res) => {
 });
 
 
+//------------********  ROUTES: POST *******------------//
+
+/* 
+New user is generated and assigned a unique ID if:
+  1) user enters a valid email and password, and 
+  2) the email is not taken by another user
+Relevant error message is sent if otherwise. 
+*/ 
 
 app.post("/register", (req, res) => {
   const user_id = generateRandomString();
@@ -181,6 +189,9 @@ app.post("/register", (req, res) => {
 });
 
 
+//Checks if user exists by provided email then validates password.
+//Relevant error message is sent if email or password are invalid. 
+
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -196,10 +207,10 @@ app.post("/login", (req, res) => {
 });
 
 
+//Cookies are deleted upon logout 
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect(`/urls`);
-  console.log(users)
 });
 
 
