@@ -1,3 +1,20 @@
+/* TO DO 
+
+[] POST to /urls/:id/ : remove access from non-owner
+[] POST /urls/:id/delete : remove access from non-owner
+[] GET /urls/id change message to "You don't own this link"
+[] GET /u/:id crashes TypeError: Cannot read property 'longURL' of undefined" error.
+[] POST /registration : users can registter without password : There should be a check to make sure that they don't register with just email and no password.
+
+[] Add .DS_Store to gitignore
+[] Remove cookie-parser from package.json
+[] Clean up console logs
+[] Add comments for complex routes
+[] Replace vars with const/let 
+[] Semicolons 
+
+*/
+
 const express = require("express");
 const app = express();
 const PORT = 8080; 
@@ -147,21 +164,19 @@ app.post("/register", (req, res) => {
   const user_id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  const newUser = {
-    "id": user_id,
-    "email": email,
-    "password": hashedPassword
-  };
-  if (!newUser.email || !newUser.password) {  
+  if (!email || !password) {  
     res.status(400).send('Please enter a valid email and password');
   } else if (checkExistingEmail(req.body.email, users)) {
     res.status(400).send('This email is already in use. Please login or register with another email.'); 
   } else {
+    const newUser = {
+      "id": user_id,
+      "email": email,
+      "password": bcrypt.hashSync(password, 10)
+    }
     users[user_id] = newUser;
     req.session.user_id = user_id;
     res.redirect(`/urls`);
-    // console.log(users);
   }
 });
 
