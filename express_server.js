@@ -1,8 +1,8 @@
 /* TO DO 
 
-[] POST to /urls/:id/ : remove access from non-owner
-[] POST /urls/:id/delete : remove access from non-owner
-[] GET /urls/id change message to "You don't own this link"
+[x] POST to /urls/:id/ : remove access from non-owner
+[x] POST /urls/:id/delete : remove access from non-owner
+[x] GET /urls/id change message to "You don't own this link"
 [] GET /u/:id crashes TypeError: Cannot read property 'longURL' of undefined" error.
 [x] POST /registration : users can registter without password : There should be a check to make sure that they don't register with just email and no password.
 
@@ -112,7 +112,7 @@ app.get("/urls/:shortURL", (req, res) => {
         };
         res.render("urls_show", templateVars);
       } else {
-        res.status(400).send("Sorry, you don't have access to this link.");
+        res.status(400).send("Sorry, you don't have access to this TinyURL.");
       }
     }
   } else {
@@ -122,11 +122,15 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 app.get("/u/:shortURL", (req, res) => {
-  // const longURL = urlDatabase[req.params.shortURL].longURL;
-  if (urlDatabase[req.params.shortURL].longURL === undefined) {
-    res.send(404).send("This URL does not exist");
+  if (urlDatabase[req.params.shortURL]) {
+    const longURL = urlDatabase[req.params.shortURL].longURL;
+    if (longURL === undefined) {
+      res.status(302);
+    } else {
+      res.redirect(longURL);
+    }
   } else {
-    res.redirect(longURL);
+    res.status(404).send("This TinyURL is broken. Please create a new one.");
   }
 });
 
@@ -238,7 +242,7 @@ app.post("/urls/:shortURL/", (req, res) => {
     urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.session.user_id };
     res.redirect(`/urls`);
   } else {
-    res.status(401).send("Sorry, you don't have access to this link.");
+    res.status(401).send("Sorry, you don't have access to this TinyURL.");
   }
 });
 
@@ -252,7 +256,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect('/urls');
   } else {
-    res.status(401).send("Sorry, you don't have access to this link.");
+    res.status(401).send("Sorry, you don't have access to this TinyURL.");
   }
 });
 
