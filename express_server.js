@@ -6,12 +6,13 @@
 [] GET /u/:id crashes TypeError: Cannot read property 'longURL' of undefined" error.
 [x] POST /registration : users can registter without password : There should be a check to make sure that they don't register with just email and no password.
 
-[] Add .DS_Store to gitignore
-[] Remove cookie-parser from package.json
+[x] Add .DS_Store to gitignore
+[x] Remove cookie-parser from package.json
 [] Clean up console logs
 [] Add comments for complex routes
-[] Replace vars with const/let 
+[x] Replace vars with const/let 
 [] Semicolons 
+[] Remove sample databases
 
 */
 
@@ -100,7 +101,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   if(urlDatabase[req.params.shortURL]) {
     if (!req.session.user_id) {
-      res.status(400).send("Please login to use TinyApp's features.");
+      res.redirect(`/urls/`);
     } else {
       const url = urlDatabase[req.params.shortURL];
       if (url.userID === req.session.user_id) {
@@ -111,7 +112,7 @@ app.get("/urls/:shortURL", (req, res) => {
         };
         res.render("urls_show", templateVars);
       } else {
-        res.status(400).send("Sorry, you don't own this link. You can find your links at 'My URLS'.");
+        res.status(400).send("Sorry, you don't have access to this link.");
       }
     }
   } else {
@@ -121,8 +122,8 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  if (longURL === undefined) {
+  // const longURL = urlDatabase[req.params.shortURL].longURL;
+  if (urlDatabase[req.params.shortURL].longURL === undefined) {
     res.send(404).send("This URL does not exist");
   } else {
     res.redirect(longURL);
@@ -152,7 +153,7 @@ app.get("/login", (req, res) => {
 
 app.get("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id) {
-    res.status(400).send("Please login to use TinyApp's features.");
+    res.redirect(`/urls/`);
   } else {
     res.redirect(`/urls`)
   }  
@@ -214,9 +215,10 @@ app.post("/logout", (req, res) => {
 });
 
 
+//New URL is created and posted to urlDatabase
 app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
-    res.status(400).send("Please login to use TinyApp's features.");
+    res.redirect(`/urls/`);
   } else {
     const shortURL = generateRandomString();
     urlDatabase[shortURL] = {
@@ -229,14 +231,29 @@ app.post("/urls", (req, res) => {
 
 
 app.post("/urls/:shortURL/", (req, res) => {
+  if (!req.session.user_id) {
+    res.redirect(`/urls/`);
+  }
+  const url = urlDatabase[req.params.shortURL];
+  if (url.userID !== req.session.user_id) {
+    res.status(400).send("Sorry, you don't have access to this link.");
+  }
   urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.session.user_id };
   res.redirect(`/urls`);
 });
 
 
+//Deletes URL from database if the user is the URL owner
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect(`/urls`);
+  const userID = req.session.user_id;
+  const userUrls = urlsForUser(userID, urlDatabase);
+  if (Object.keys(userUrls).includes(req.params.shortURL)) {
+    const shortURL = req.params.shortURL;
+    delete urlDatabase[shortURL];
+    res.redirect('/urls');
+  } else {
+    res.status(401).send("Sorry, you don't have access to this link.");
+  }
 });
 
 
