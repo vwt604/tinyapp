@@ -229,17 +229,17 @@ app.post("/urls", (req, res) => {
   }
 });
 
-
+//Edits URL if user is the URL owner
 app.post("/urls/:shortURL/", (req, res) => {
-  if (!req.session.user_id) {
-    res.redirect(`/urls/`);
+  const userID = req.session.user_id;
+  const userUrls = urlsForUser(userID, urlDatabase);
+  if (Object.keys(userUrls).includes(req.params.shortURL)) {
+    const shortURL = req.params.shortURL;
+    urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.session.user_id };
+    res.redirect(`/urls`);
+  } else {
+    res.status(401).send("Sorry, you don't have access to this link.");
   }
-  const url = urlDatabase[req.params.shortURL];
-  if (url.userID !== req.session.user_id) {
-    res.status(400).send("Sorry, you don't have access to this link.");
-  }
-  urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.session.user_id };
-  res.redirect(`/urls`);
 });
 
 
