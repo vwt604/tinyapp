@@ -1,4 +1,4 @@
-/* TO DO 
+/* TO DO
 
 [x] POST to /urls/:id/ : remove access from non-owner
 [x] POST /urls/:id/delete : remove access from non-owner
@@ -8,17 +8,17 @@
 
 [x] Add .DS_Store to gitignore
 [x] Remove cookie-parser from package.json
-[] Clean up console logs
+[x] Clean up console logs
 [] Add comments for complex routes
-[x] Replace vars with const/let 
-[] Semicolons 
-[] Remove sample databases
+[x] Replace vars with const/let
+[x] Semicolons
+[x] Remove sample databases
 
 */
 
 const express = require("express");
 const app = express();
-const PORT = 8080; 
+const PORT = 8080;
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
@@ -35,32 +35,9 @@ app.use(cookieSession({
 }));
 
 
-const urlDatabase = {
-  i3fewr: { longURL: "https://www.google.ca", userID: "userRandomID" },
-  b6UTxQ: { longURL: "https://www.pizza.ca", userID: "userRandomID" },
-  v38djr: { longURL: "https://www.facebook.com", userID: "userRandomID" },
-  c7wham: { longURL: "https://www.youtube.com", userID: "userRandomID" },
-  xshdn2: { longURL: "https://www.lighthouselabs.com", userID: "user2RandomID" },
-  j8ksbs: { longURL: "https://www.codecademy.com", userID: "user2RandomID" }
-};
+const urlDatabase = {};
 
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "joey@friends.com",
-    password: bcrypt.hashSync('how-u-doin', 10)
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "phoebe@friends.com",
-    password: bcrypt.hashSync('smelly-cat', 10)
-  },
-  "user3RandomID": {
-    id: "user3RandomID",
-    email: "chandler@friends.com",
-    password: bcrypt.hashSync('whats-my-job', 10)
-  }
-};
+const users = {};
 
 
 //------------********  ROUTES: GET  *******------------//
@@ -75,7 +52,7 @@ app.get("/", (req, res) => {
   } else {
     res.redirect(`/urls`);
   }
-})
+});
 
 
 app.get("/urls", (req, res) => {
@@ -99,7 +76,7 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls/:shortURL", (req, res) => {
-  if(urlDatabase[req.params.shortURL]) {
+  if (urlDatabase[req.params.shortURL]) {
     if (!req.session.user_id) {
       res.redirect(`/urls/`);
     } else {
@@ -140,7 +117,7 @@ app.get("/register", (req, res) => {
     const templateVars = {user: users[req.session.user_id]};
     res.render("register", templateVars);
   } else {
-    res.redirect(`/urls`)
+    res.redirect(`/urls`);
   }
 });
 
@@ -151,42 +128,39 @@ app.get("/login", (req, res) => {
     const templateVars = {user: users[req.session.user_id]};
     res.render("login", templateVars);
   } else {
-    res.redirect(`/urls`)
-  }  
+    res.redirect(`/urls`);
+  }
 });
 
 app.get("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id) {
     res.redirect(`/urls/`);
   } else {
-    res.redirect(`/urls`)
-  }  
+    res.redirect(`/urls`);
+  }
 });
 
-
-//------------********  ROUTES: POST *******------------//
-
-/* 
-New user is generated and assigned a unique ID if:
-  1) user enters a valid email and password, and 
+/*
+New user is generated if:
+  1) user enters a valid email and password, and
   2) the email is not taken by another user
-Relevant error message is sent if otherwise. 
-*/ 
+Random ID is generated and saved to database with email and ecrypted password
+*/
 
 app.post("/register", (req, res) => {
   const user_id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
-  if (!email || !password) {  
+  if (!email || !password) {
     res.status(400).send('Please enter a valid email and password');
   } else if (checkExistingEmail(req.body.email, users)) {
-    res.status(400).send('This email is already in use. Please login or register with another email.'); 
+    res.status(400).send('This email is already in use. Please login or register with another email.');
   } else {
     const newUser = {
       "id": user_id,
       "email": email,
       "password": bcrypt.hashSync(password, 10)
-    }
+    };
     users[user_id] = newUser;
     req.session.user_id = user_id;
     res.redirect(`/urls`);
@@ -194,8 +168,8 @@ app.post("/register", (req, res) => {
 });
 
 
-//Checks if user exists by provided email then validates password.
-//Relevant error message is sent if email or password are invalid. 
+//Checks if user exists by provided email then validates encrypted password. 
+//Relevant error message is sent if email or password are invalid.
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
@@ -212,7 +186,7 @@ app.post("/login", (req, res) => {
 });
 
 
-//Cookies are deleted upon logout 
+//Cookies are deleted upon logout
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect(`/urls`);
@@ -233,12 +207,11 @@ app.post("/urls", (req, res) => {
   }
 });
 
-//Edits URL if user is the URL owner
+//Edits URL in database if user is the URL owner
 app.post("/urls/:shortURL/", (req, res) => {
   const userID = req.session.user_id;
   const userUrls = urlsForUser(userID, urlDatabase);
   if (Object.keys(userUrls).includes(req.params.shortURL)) {
-    const shortURL = req.params.shortURL;
     urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.session.user_id };
     res.redirect(`/urls`);
   } else {
