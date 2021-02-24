@@ -1,21 +1,3 @@
-/* TO DO
-
-[x] POST to /urls/:id/ : remove access from non-owner
-[x] POST /urls/:id/delete : remove access from non-owner
-[x] GET /urls/id change message to "You don't own this link"
-[] GET /u/:id crashes TypeError: Cannot read property 'longURL' of undefined" error.
-[x] POST /registration : users can registter without password : There should be a check to make sure that they don't register with just email and no password.
-
-[x] Add .DS_Store to gitignore
-[x] Remove cookie-parser from package.json
-[x] Clean up console logs
-[] Add comments for complex routes
-[x] Replace vars with const/let
-[x] Semicolons
-[x] Remove sample databases
-
-*/
-
 const express = require("express");
 const app = express();
 const PORT = 8080;
@@ -39,8 +21,6 @@ const urlDatabase = {};
 
 const users = {};
 
-
-//------------********  ROUTES: GET  *******------------//
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -76,38 +56,30 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL]) {
-    if (!req.session.user_id) {
-      res.redirect(`/urls/`);
-    } else {
-      const url = urlDatabase[req.params.shortURL];
-      if (url.userID === req.session.user_id) {
-        const templateVars = {
-          longURL: urlDatabase[req.params.shortURL]['longURL'],
-          shortURL: req.params.shortURL,
-          user: users[req.session.user_id],
-        };
-        res.render("urls_show", templateVars);
-      } else {
-        res.status(400).send("Sorry, you don't have access to this TinyURL.");
-      }
-    }
-  } else {
+  if (!urlDatabase[req.params.shortURL]) {
     res.status(404).send("This TinyURL does not exist.");
+  }
+  if (!req.session.user_id) {
+    res.redirect(`/urls/`);
+  }
+  const url = urlDatabase[req.params.shortURL];
+  if (url.userID === req.session.user_id) {
+    const templateVars = {
+      longURL: urlDatabase[req.params.shortURL]['longURL'],
+      shortURL: req.params.shortURL,
+      user: users[req.session.user_id],
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(400).send("Sorry, you don't have access to this TinyURL.");
   }
 });
 
-
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
-    const longURL = urlDatabase[req.params.shortURL].longURL;
-    if (longURL === undefined) {
-      res.status(302);
-    } else {
-      res.redirect(longURL);
-    }
+    res.redirect(urlDatabase[req.params.shortURL].longURL);
   } else {
-    res.status(404).send("This TinyURL is broken. Please create a new one.");
+    res.status(404).send("Sorry, we could not find this TinyURL.");
   }
 });
 
@@ -168,7 +140,7 @@ app.post("/register", (req, res) => {
 });
 
 
-//Checks if user exists by provided email then validates encrypted password. 
+//Checks if user exists by provided email then validates encrypted password.
 //Relevant error message is sent if email or password are invalid.
 
 app.post("/login", (req, res) => {
@@ -215,7 +187,7 @@ app.post("/urls/:shortURL/", (req, res) => {
     urlDatabase[req.params.shortURL] = { longURL: req.body.newURL, userID: req.session.user_id };
     res.redirect(`/urls`);
   } else {
-    res.status(401).send("Sorry, you don't have access to this TinyURL.");
+    res.status(403).send("Sorry, you don't have access to this TinyURL.");
   }
 });
 
@@ -229,7 +201,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect('/urls');
   } else {
-    res.status(401).send("Sorry, you don't have access to this TinyURL.");
+    res.status(403).send("Sorry, you don't have access to this TinyURL.");
   }
 });
 
