@@ -1,10 +1,6 @@
-.w-75 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.card {
   background-color: #d1ecf1;
   color: #0c5460;
-  margin-top: 50px;
 }
 
 .card-body {
