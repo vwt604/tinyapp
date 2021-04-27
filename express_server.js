@@ -15,6 +15,7 @@ app.use(cookieSession({
   name: 'TinyURL',
   keys: ['secret things', 'more secret things']
 }));
+app.use(express.static(__dirname + '/public'));
 
 
 const urlDatabase = {};

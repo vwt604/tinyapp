@@ -1,0 +1,16 @@
+.w-75 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d1ecf1;
+  color: #0c5460;
+  margin-top: 50px;
+}
+
+.card-body {
+  flex: 1 1 auto;
+  display: flex;
+  padding: 1.25rem;
+  align-items: center;
+  justify-content: center;
+}
