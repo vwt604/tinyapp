@@ -27,7 +27,7 @@
       <tbody>
         <% if (!user) { %>
           <div class="alert alert-info" role="alert">
-              <a>Please login or register</a>
+              <a>Please <a href="/login">login</a> or <a href="/register">register</a>.
             </div>
         <% } else { %>
           <% for(let url in urls) { %>

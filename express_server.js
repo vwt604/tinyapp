@@ -113,13 +113,6 @@ app.get("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
-/*
-New user is generated if:
-  1) user enters a valid email and password, and
-  2) the email is not taken by another user
-Random ID is generated and saved to database with email and ecrypted password
-*/
-
 app.post("/register", (req, res) => {
   const user_id = generateRandomString();
   const email = req.body.email;
