@@ -27,7 +27,7 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// Index redirects to My URLs page
+// Index redirects to My TinyURLs page
 app.get("/", (req, res) => {
   res.redirect(`/urls`)
 });
