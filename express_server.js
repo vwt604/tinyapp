@@ -28,11 +28,11 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  if (!req.session.user_id) {
-    res.redirect(`/login`);
-  } else {
-    res.redirect(`/urls`);
-  }
+  // if (!req.session.user_id) {
+  //   res.redirect(`/login`);
+  // } else {
+  //   res.redirect(`/urls`);
+  // }
 });
 
 
@@ -96,7 +96,6 @@ app.get("/register", (req, res) => {
 
 
 app.get("/login", (req, res) => {
-
   if (!req.session.user_id) {
     const templateVars = {user: users[req.session.user_id]};
     res.render("login", templateVars);
