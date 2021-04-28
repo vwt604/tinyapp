@@ -27,12 +27,9 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+// Get Index page
 app.get("/", (req, res) => {
-  // if (!req.session.user_id) {
-  //   res.redirect(`/login`);
-  // } else {
-  //   res.redirect(`/urls`);
-  // }
+  res.redirect(`/urls`)
 });
 
 
@@ -46,15 +43,19 @@ app.get("/urls", (req, res) => {
 });
 
 
+// app.get("/urls/new", (req, res) => {
+//   const templateVars = {user: users[req.session.user_id]};
+//   if (!req.session.user_id) {
+//     res.redirect("/login");
+//   } else {
+//     res.render("urls_new", templateVars);
+//   }
+// });
+
 app.get("/urls/new", (req, res) => {
   const templateVars = {user: users[req.session.user_id]};
-  if (!req.session.user_id) {
-    res.redirect("/login");
-  } else {
-    res.render("urls_new", templateVars);
-  }
+  res.render("urls_new", templateVars);
 });
-
 
 app.get("/urls/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
@@ -134,7 +135,6 @@ app.post("/register", (req, res) => {
 
 
 //Checks if user exists by provided email then validates encrypted password.
-//Relevant error message is sent if email or password are invalid.
 
 app.post("/login", (req, res) => {
   const email = req.body.email;

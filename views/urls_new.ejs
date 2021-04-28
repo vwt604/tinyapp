@@ -17,6 +17,11 @@
     </header>
     <main style="margin: 1em;">
       <h3>Create a TinyURL</h3>
+      <% if (!user) { %>
+        <div class="alert alert-info" role="alert">
+            <a>Please <a href="/login">login</a> or <a href="/register">register</a> to use TinyApp's features.
+          </div>
+      <% } else { %>
       <div class="card w-50 mx-auto" style="margin-top: 50px;">
         <div class="card-body">
           <form class="form-inline" action="/urls" method="POST">
@@ -28,6 +33,7 @@
           </form>
          </div>
       </div>
+      <% } %>
     </main>
       <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
