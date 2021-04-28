@@ -27,12 +27,12 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// Get Index page
+// Index redirects to My URLs page
 app.get("/", (req, res) => {
   res.redirect(`/urls`)
 });
 
-
+// Gets My TinyURLs page
 app.get("/urls", (req, res) => {
   const filteredUrls = urlsForUser(req.session.user_id, urlDatabase);
   const templateVars = {
@@ -42,21 +42,13 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-
-// app.get("/urls/new", (req, res) => {
-//   const templateVars = {user: users[req.session.user_id]};
-//   if (!req.session.user_id) {
-//     res.redirect("/login");
-//   } else {
-//     res.render("urls_new", templateVars);
-//   }
-// });
-
+// Gets Create TinyURL page
 app.get("/urls/new", (req, res) => {
   const templateVars = {user: users[req.session.user_id]};
-  res.render("urls_new", templateVars);
+  res.render("urls_new", templateVars); 
 });
 
+// Gets page after TinyURL is created
 app.get("/urls/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     res.status(404).send("This TinyURL does not exist.");
@@ -77,6 +69,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 });
 
+// Gets a TinyURL
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
     res.redirect(urlDatabase[req.params.shortURL].longURL);
@@ -85,7 +78,7 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
-
+// Gets registration page
 app.get("/register", (req, res) => {
   if (!req.session.user_id) {
     const templateVars = {user: users[req.session.user_id]};
@@ -95,7 +88,7 @@ app.get("/register", (req, res) => {
   }
 });
 
-
+// Gets login page
 app.get("/login", (req, res) => {
   if (!req.session.user_id) {
     const templateVars = {user: users[req.session.user_id]};
@@ -105,14 +98,7 @@ app.get("/login", (req, res) => {
   }
 });
 
-app.get("/urls/:shortURL/delete", (req, res) => {
-  if (!req.session.user_id) {
-    res.redirect(`/urls/`);
-  } else {
-    res.redirect(`/urls`);
-  }
-});
-
+// Registers a new user and validates form info
 app.post("/register", (req, res) => {
   const user_id = generateRandomString();
   const email = req.body.email;
@@ -133,9 +119,7 @@ app.post("/register", (req, res) => {
   }
 });
 
-
-//Checks if user exists by provided email then validates encrypted password.
-
+// Verifies login information
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -150,15 +134,14 @@ app.post("/login", (req, res) => {
   }
 });
 
-
-//Cookies are deleted upon logout
+// Deletes cookies upon logout
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect(`/urls`);
 });
 
 
-//New URL is created and posted to urlDatabase
+// Posts new TinyURL to database
 app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.redirect(`/urls/`);
@@ -172,7 +155,7 @@ app.post("/urls", (req, res) => {
   }
 });
 
-//Edits URL in database if user is the URL owner
+// Edits TinyURL in database if user is the URL owner
 app.post("/urls/:shortURL/", (req, res) => {
   const userID = req.session.user_id;
   const userUrls = urlsForUser(userID, urlDatabase);
@@ -185,7 +168,7 @@ app.post("/urls/:shortURL/", (req, res) => {
 });
 
 
-//Deletes URL from database if the user is the URL owner
+// Deletes TinyURL from database if the user is the URL owner
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userID = req.session.user_id;
   const userUrls = urlsForUser(userID, urlDatabase);
