@@ -5,16 +5,16 @@ TinyApp is a full stack web application built with Node and Express that allows 
 ## Final Product
 
 Home page
-!["Screenshot of MyUrls page"](https://github.com/vwt604/tinyapp/blob/main/public/docs/img_1.png?raw=true)
+!["Screenshot of MyUrls page"](https://github.com/vwt604/tinyapp/blob/master/public/docs/img_1.png)
 
 Creating a TinyURL
-!["Screenshot of Create URL page"](https://github.com/vwt604/tinyapp/blob/main/public/docs/img_2.png?raw=true)
+!["Screenshot of Create URL page"](https://github.com/vwt604/tinyapp/blob/master/public/docs/img_2.png)
 
 Show/edit TinyURL
-!["Screenshot of Created URL page"](https://github.com/vwt604/tinyapp/blob/main/public/docs/img_3.png?raw=true)
+!["Screenshot of Created URL page"](https://github.com/vwt604/tinyapp/blob/master/public/docs/img_3.png)
 
 User authenticated features
-!["Screenshot of user authentication"](https://github.com/vwt604/tinyapp/blob/main/public/docs/img_4.png?raw=true)
+!["Screenshot of user authentication"](https://github.com/vwt604/tinyapp/blob/master/public/docs/img_4.png)
 
 ## Dependencies
 
